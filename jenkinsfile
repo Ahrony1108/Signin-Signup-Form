@@ -1,0 +1,54 @@
+pipeline {
+
+    agent any
+
+    environment {
+
+        IMAGE_NAME="user_signup"
+
+    }
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                git branch: 'master',
+                url: 'https://github.com/Ahrony1108/Signin-Signup-Form.git'
+
+            }
+
+        }
+
+        stage('Build Docker Image') {
+
+            steps {
+
+                sh 'docker build -t $IMAGE_NAME .'
+
+            }
+
+        }
+
+        stage('Run Container') {
+
+            steps {
+
+                sh '''
+                docker stop attendance-app || true
+                docker rm attendance-app || true
+
+                docker run -d \
+                --name attendance-app \
+                -p 8080:80 \
+                attendance-app
+                '''
+
+            }
+
+        }
+
+    }
+
+}
